@@ -1,0 +1,7 @@
+venv
+.env
+
+# Ide Releated
+.vscode
+
+*.mp3
