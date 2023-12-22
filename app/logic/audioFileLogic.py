@@ -4,7 +4,6 @@
 # use for the import data from .env to the project
 from dotenv import load_dotenv, find_dotenv
 import os
-import base64
 
 
 # AssemblyAI --> Speech-to-Text (STT)
