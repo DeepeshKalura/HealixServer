@@ -5,3 +5,8 @@ venv
 .vscode
 
 *.mp3
+
+# server catch
+
+__pycache__
+
