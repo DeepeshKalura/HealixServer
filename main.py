@@ -5,15 +5,17 @@
 from dotenv import load_dotenv, find_dotenv
 import os
 
-# AssemblyAI
+# AssemblyAI --> Speech-to-Text (STT)
 
 import assemblyai as aai
 
-# Google docs
+# Google docs  --> Main AI bot
 
-import pathlib
-import textwrap
 import google.generativeai as genai
+
+# Speech To text  --> Speech-to-Text (STT)
+from gtts import gTTS
+
 
 
 load_dotenv(find_dotenv())
@@ -32,26 +34,14 @@ print("I am here");
 
 transcript = transcriber.transcribe(audioFile)
 # print("Reached here")
-# print(transcript.text)
+# print(transcript.t generate(text="Hello there!", voice=voices[0])ext)
 # print("\n\n\n")
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-modelGeminiPro = genai.GenerativeModel('gemini-pro')
+modelGeminiPro = genai.GenerativeModel('gemini-pro', generation_config=genai.GenerationConfig(max_output_tokens=100))
 
 messageString = transcript.text
 
+tts = gTTS(messageString, lang='en')
 
 
-
-
-
-
-
-
-# ! This is the great start i will going to first create the audio to the 
-
-print("Currently here")  
-response = modelGeminiPro.generate_content(messageString)
-print("Reached here")
-# print("Now Reached Here")
-print(response.text)
 
