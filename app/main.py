@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from app.logic.audioFileLogic import audioFileProceesing
 import io
 from pydantic import BaseModel
+from app.logic.chatModel import ChatWithModel
 
 
 
@@ -28,6 +29,6 @@ class AudioRequestModel(BaseModel):
 
 @app.post("/audio")
 async def process_audio_endpoint(audio: AudioRequestModel = Body(...)):
-
-    audioFileProceesing(audio.audio_url)
+    chat_model = ChatWithModel()
+    audioFileProceesing(audio_file=audio.audio_url, chatWithModel=chat_model)
     return FileResponse("response.mp3", media_type="audio/mpeg")
