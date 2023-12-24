@@ -4,10 +4,9 @@ from app.logic.audioFileLogic import audioFileProceesing
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.logic.chatModel import ChatWithModel
+
 origins = ["*"]
-
-
-
 
 
 
@@ -34,12 +33,8 @@ async def root():
 class AudioRequestModel(BaseModel):
     audio_url: str
 
-
-
-
-
 @app.post("/audio")
 async def process_audio_endpoint(audio: AudioRequestModel = Body(...)):
-
-    audioFileProceesing(audio.audio_url)
+    chat_model = ChatWithModel()
+    audioFileProceesing(audio_file=audio.audio_url, chatWithModel=chat_model)
     return FileResponse("response.mp3", media_type="audio/mpeg")
