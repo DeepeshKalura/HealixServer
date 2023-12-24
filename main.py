@@ -36,12 +36,10 @@ transcript = transcriber.transcribe(audioFile)
 # print("Reached here")
 # print(transcript.t generate(text="Hello there!", voice=voices[0])ext)
 # print("\n\n\n")
+
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 modelGeminiPro = genai.GenerativeModel('gemini-pro', generation_config=genai.GenerationConfig(max_output_tokens=100))
 
 messageString = transcript.text
 
 tts = gTTS(messageString, lang='en')
-
-
-

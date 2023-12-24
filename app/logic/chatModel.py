@@ -47,10 +47,3 @@ class ChatWithModel:
         response = self.convo.send_message(message)
 
         return response.text
-
-
-
-
-
-
-
