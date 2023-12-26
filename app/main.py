@@ -1,4 +1,4 @@
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, WebSocket
 from fastapi.responses import FileResponse
 from app.logic.audioFileLogic import audioFileProceesing
 from pydantic import BaseModel
@@ -38,3 +38,20 @@ async def process_audio_endpoint(audio: AudioRequestModel = Body(...)):
     chat_model = ChatWithModel()
     audioFileProceesing(audio_file=audio.audio_url, chatWithModel=chat_model)
     return FileResponse("response.mp3", media_type="audio/mpeg")
+
+@app.websocket("/text")
+async def text_webscoket_endpoint(websocket: WebSocket):
+
+    task = websocket.accept
+
+    chat_model = ChatWithModel()
+
+    await task()
+
+    while True:
+        data = await websocket.receive_text()
+        if(data == 'exit' or data == 'Exit'):
+            await websocket.close()
+            break
+        response = chat_model.Phykologist(message=data)
+        await websocket.send_text(response)
