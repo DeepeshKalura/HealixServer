@@ -1,7 +1,7 @@
 from fastapi import Body, FastAPI, File, UploadFile, WebSocket
 from fastapi.responses import FileResponse, StreamingResponse
 from app.logic.audioFileLogic import audioFileProceesing
-import io
+import os
 from pydantic import BaseModel
 from app.logic.chatModel import ChatWithModel
 
@@ -9,7 +9,7 @@ from app.logic.chatModel import ChatWithModel
 
 
 app = FastAPI()
-
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/etc/secrets/application_default_credentials.json"
 
 @app.get("/")
 async def root():
@@ -22,7 +22,7 @@ async def root():
 
 class AudioRequestModel(BaseModel):
     audio_url: str
-
+# wss://text-to-speech-uajn.onrender.com/text
 
 
 
