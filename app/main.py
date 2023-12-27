@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 from app.logic.audioFileLogic import audioFileProceesing
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-
+import os
 from app.logic.chatModel import ChatWithModel
 
 origins = ["*"]
@@ -11,6 +11,7 @@ origins = ["*"]
 
 
 app = FastAPI()
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/etc/secrets/application_default_credentials.json"
 
 app.add_middleware(
     CORSMiddleware,
