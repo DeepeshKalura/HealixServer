@@ -22,6 +22,7 @@ class ChatWithModel:
         if(self.convo is None):
 
             model = genai.GenerativeModel(model_name="gemini-pro",generation_config=generation_config)
+            
 
         
             self.convo = model.start_chat(history=[
