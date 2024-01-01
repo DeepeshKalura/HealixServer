@@ -14,3 +14,18 @@ The backend is structured as a RESTful API using FastAPI to interact with the AI
   - **`models/`**: Defines data models.
 - **`tests/`**: Contains test cases for the API.
 - **`requirements.txt`**: Lists the Python dependencies for the project.
+
+## Technologies Used
+
+- **FastAPI**: Fast (high-performance), web framework for building APIs with Python.
+- **Gemini**: Chat AI Service.
+
+
+## API Documentation
+
+For detailed API documentation and endpoints, refer to the automatically generated [Swagger Documentation](http://localhost:8000/docs) and [ReDoc Documentation](http://localhost:8000/redoc) during development.
+
+## Contributing
+
+We welcome contributions to enhance the functionality and features of the project. If you'd like to contribute, please follow our [Contribution Guidelines](CONTRIBUTING.md).
+
