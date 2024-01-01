@@ -22,10 +22,14 @@ The backend is structured as a RESTful API using FastAPI to interact with the AI
 
 ## TODO Flow
 ### First One
-- [ ] Webscoket have the session that will get the text and Gemini will going to response with the Text
+- [ ] Webscoket have the session that will get the text and Gemini will going to response with the  that will be response of webscoket
 - [ ] Storage will store all the important data in the file
 - [ ] log the important information 
 
+### Second One
+- [ ] Webscoket have the session that will get the stream of audio and Gemini will going to response with the Text that will be convert to audio that audio will be webscoket response.
+- [ ] Storage will store all the important data in the file
+- [ ] log the important information 
 ## API Documentation
 
 For detailed API documentation and endpoints, refer to the automatically generated [Swagger Documentation](http://localhost:8000/docs) and [ReDoc Documentation](http://localhost:8000/redoc) during development.
