@@ -1,10 +1,10 @@
 from fastapi import Body, FastAPI, WebSocket
 from fastapi.responses import FileResponse
-from app.logic.audioFileLogic import audioFileProceesing
+from app.model.audioFileLogic import audioFileProceesing
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from app.logic.chatModel import ChatWithModel
+from app.model.chatModel import ChatWithModel
 
 origins = ["*"]
 
