@@ -20,6 +20,11 @@ The backend is structured as a RESTful API using FastAPI to interact with the AI
 - **FastAPI**: Fast (high-performance), web framework for building APIs with Python.
 - **Gemini**: Chat AI Service.
 
+## TODO Flow
+### First One
+- [ ] Webscoket have the session that will get the text and Gemini will going to response with the Text
+- [ ] Storage will store all the important data in the file
+- [ ] log the important information 
 
 ## API Documentation
 
