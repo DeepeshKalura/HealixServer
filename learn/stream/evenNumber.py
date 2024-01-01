@@ -9,8 +9,15 @@ async def evenNumberGenerator():
 
 async def main():
     async for i in evenNumberGenerator():
-        print(i)
+        print(i*2)
+
+
 
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
+
+
+
