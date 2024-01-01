@@ -37,6 +37,8 @@ async def process_audio_endpoint(audio: AudioRequestModel = Body(...)):
 @app.websocket("/audio")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+
+    # seesion 
     while True:
         # Wait for incoming data from the client
         data = await websocket.receive_bytes()
@@ -44,8 +46,16 @@ async def websocket_endpoint(websocket: WebSocket):
 
         processed_audio = process_audio(data)
 
+        #  connection raher wait 
+
         # Send the processed audio back to the client
         await websocket.send_bytes(processed_audio)
+
+
+#  idel 
+
+
+
 
 @app.websocket("/text")
 async def text_webscoket_endpoint(websocket: WebSocket):
@@ -62,11 +72,14 @@ async def text_webscoket_endpoint(websocket: WebSocket):
             await websocket.close()
             break
         response = chat_model.Phykologist(message=data)
+        
         await websocket.send_text(response)
 
-
-        
-
-
 def process_audio(raw_audio_data: bytes) -> bytes:
-    return raw_audio_data
+
+    #  logic
+
+    # _____________ 2 sec 
+    return raw_audio_data # -- data ---> transcripe (text).....  
+
+#  state 
