@@ -20,13 +20,14 @@ from gtts import gTTS
 
 load_dotenv(find_dotenv())
 
+
+
 aai.settings.api_key = os.getenv("AAI_API_KEY")
 transcriber = aai.Transcriber()
 # audioPath = ["HindiGretting.mp3","EnglishGretting.mp3"];
 # audioFile = "HindiGretting.mp3";
 # audioFile = "EnglishGretting.mp3";
 audioFile = "professionalLength.mp3";
-print("I am here");
 
 
 
@@ -40,6 +41,15 @@ transcript = transcriber.transcribe(audioFile)
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 modelGeminiPro = genai.GenerativeModel('gemini-pro', generation_config=genai.GenerationConfig(max_output_tokens=100))
 
+
+
+
 messageString = transcript.text
 
-tts = gTTS(messageString, lang='en')
+response = modelGeminiPro.generate_content(transcript.text)
+print(response.text)
+
+
+
+
+tts = gTTS(response.text, lang='en')
