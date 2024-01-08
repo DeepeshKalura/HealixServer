@@ -13,3 +13,7 @@ __pycache__
 *.wav
 
 *.txt
+
+*.zip
+
+*.csv
