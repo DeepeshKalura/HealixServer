@@ -17,3 +17,6 @@ __pycache__
 *.zip
 
 *.csv
+
+application_default_credentials.json
+client_secret.json

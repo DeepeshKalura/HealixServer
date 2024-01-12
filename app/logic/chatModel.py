@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv, find_dotenv
 import google.generativeai as genai
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import google.generativeai as genai
 from langchain.vectorstores import FAISS
