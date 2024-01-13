@@ -56,3 +56,21 @@ async def text_webscoket_endpoint(websocket: WebSocket):
             break
         response = chat_model.Phykologist(message=data)
         await websocket.send_text(response)
+
+
+@app.websocket("/blog")
+async def blog_webscoket_endpoint(websocket: WebSocket):
+
+    task = websocket.accept
+
+    chat_model = ChatWithModel()
+
+    await task()
+
+    while True:
+        data = await websocket.receive_text()
+        if(data == 'exit' or data == 'Exit'):
+            await websocket.close()
+            break
+        response = chat_model.blog(data)
+        await websocket.send_text(response)

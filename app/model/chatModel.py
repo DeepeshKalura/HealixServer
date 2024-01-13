@@ -7,6 +7,26 @@ class ChatWithModel:
     def __init__(self): 
         self.convo = None
 
+    
+    def blog(self, about):
+        load_dotenv(find_dotenv())
+
+        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+        generation_config = {
+        "temperature": 0.55,
+        "top_p": 1,
+        "top_k": 32,
+        "max_output_tokens": 4096,
+        }
+        model = genai.GenerativeModel(model_name="gemini-pro",generation_config=generation_config)
+        try : 
+            response = model.generate_content(about)
+            return response.text
+        except:
+            return "Sorry, I am not able to understand you. Can you please rephrase your question?"
+
+
+
     def Phykologist(self, message):
 
         load_dotenv(find_dotenv())
