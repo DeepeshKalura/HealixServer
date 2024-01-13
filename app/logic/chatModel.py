@@ -32,7 +32,7 @@ class ChatWithModel:
 
     def get_model_response(self, message):
         embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001",google_api_key=os.getenv("GEMINI_API_KEY"))
-        new_db = FAISS.load_local("../faiss_index", embeddings)
+        new_db = FAISS.load_local("/home/deepesh/development/challange/solution/textToSpeech/app/faiss_index", embeddings)
         docs = new_db.similarity_search(message)
         chain = self.get_conversational_chain()
         response = chain(
