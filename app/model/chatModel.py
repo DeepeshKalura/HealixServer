@@ -16,7 +16,7 @@ class ChatWithModel:
     def get_conversational_chain(self):
 
         prompt_template = """
-        Converse with the patient using the context and try to give support
+        Your name is Sky you converse with the patient using the context and try to give support
         Context:\n {context}?\n
         Question: \n{question}\n
         Answer:
@@ -34,8 +34,8 @@ class ChatWithModel:
         embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001",google_api_key=os.getenv("GEMINI_API_KEY"))
         file_path = "faiss_index"
         absolute_file_path = os.path.abspath(file_path)
-        print("absolute_file_path")
         print(absolute_file_path)
+        
         print("\n\n\n")
         new_db = FAISS.load_local(absolute_file_path, embeddings)
         docs = new_db.similarity_search(message)
