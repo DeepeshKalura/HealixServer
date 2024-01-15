@@ -12,5 +12,11 @@ __pycache__
 
 *.wav
 
-cred
-learn
+*.txt
+
+*.zip
+
+*.csv
+
+application_default_credentials.json
+client_secret.json

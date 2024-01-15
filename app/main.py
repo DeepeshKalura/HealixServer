@@ -1,7 +1,9 @@
-from fastapi import Body, FastAPI, WebSocket
-from fastapi.responses import FileResponse
-from app.model.audioFileLogic import audioFileProceesing
+from fastapi import Body, FastAPI, File, UploadFile, WebSocket
+from fastapi.responses import FileResponse, StreamingResponse
+import io
 from pydantic import BaseModel
+# from app.logic.chatModel import ChatWithModel
+from app.model.chatModel import ChatWithModel
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from app.model.chatModel import ChatWithModel
@@ -21,6 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/etc/secrets/application_default_credentials.json"
 
 @app.get("/")
 async def root():
@@ -35,10 +38,6 @@ class AudioRequestModel(BaseModel):
     audio_url: str
 
 @app.post("/audio")
-async def process_audio_endpoint(audio: AudioRequestModel = Body(...)):
-    chat_model = ChatWithModel()
-    audioFileProceesing(audio_file=audio.audio_url, chatWithModel=chat_model)
-    return FileResponse("response.mp3", media_type="audio/mpeg")
 
 @app.websocket("/text")
 async def text_webscoket_endpoint(websocket: WebSocket):
@@ -55,8 +54,8 @@ async def text_webscoket_endpoint(websocket: WebSocket):
             await websocket.close()
             break
         response = chat_model.Phykologist(message=data)
+        
         await websocket.send_text(response)
-
 
 @app.websocket("/blog")
 async def blog_webscoket_endpoint(websocket: WebSocket):
