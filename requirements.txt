@@ -181,7 +181,6 @@ pure-eval==0.2.2
 pyarrow==14.0.2
 pyasn1==0.5.1
 pyasn1-modules==0.3.0
-PyAudio==0.2.14
 pycparser==2.21
 pydantic==2.5.2
 pydantic-extra-types==2.2.0
