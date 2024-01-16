@@ -61,46 +61,52 @@ class session(BaseModel):
 def changeTotalTime(timestamp, user):
     with open(user+".txt", "r") as f:
         lines = f.readlines()
-        lines[4] = str(float(lines[4]) +(float(timestamp))-float(lines[4])) + "\n"
+        timeTaken = ((timestamp))-float(lines[7])
+        lines[4] = str(float(lines[4]) +timestamp) + "\n"
     with open(user+".txt", "w") as f:
         f.writelines(lines)
-    return lines[3]
+    return timeTaken
 
 
 @app.post("/sessionover")
 async def session_values(username: session):
-    timestamp = datetime.datetime.now()
-    changeTotalTime(timestamp, username.name)
-    with open(username.name+".txt", "a") as f:
-        f.write(str(timestamp) + "\n")
+    timestamp = datetime.datetime.now().timestamp()
+    timeTaken = changeTotalTime(timestamp, username.name)
+    with open(username.name+".txt", "r") as f:
+        lines = [line.strip() for line in f.readlines()]
         return {
             "tag": 0,
+            "timeTaken": str(timeTaken),
+            "totalTime": lines[4]
         }
 
 @app.post("/startsession")
 async def session_values(username: session):
     numberOfSessions = 0
     sessionTime = datetime.datetime.now()
-    name = session.name
+    startSession = sessionTime.timestamp()
     tag = 0
     pyq = ""
     with open(username.name+".txt", "r") as f:
-        numberOfSessions = int(f.readlines()[1]) + 1
-        tag = int(f.readlines()[2])
-        pyq = f.readlines()[3]
+        lines = f.readlines()
+        print(lines)
+        numberOfSessions = int(lines[1]) + 1
+        tag = int(lines[2])
+        pyq = lines[3]
     with open(username.name+".txt", "w") as f:
-        f.write(name + "\n")
+        f.write(username.name + "\n")
         f.write(str(numberOfSessions) + "\n")
         f.write(str(tag) + "\n")
         f.write(pyq + "\n")
         f.write("0" + "\n")
         f.write(str(sessionTime) + "\n")
+        f.write(str(startSession) + "\n")
 
     return {
         "message": "Session Started",
     }
 
-@app.post("/newuser")
+@app.post("/user")
 async def user_values(input: UserRequestMode):
     user_name = input.name
     with open(user_name+".txt", "w") as f:
@@ -114,8 +120,8 @@ async def user_values(input: UserRequestMode):
             "name": input.name,
             "total_number_of_sessions": "0",
             "tag": input.tag,
-            "pyq": input.pd_code,
-            "total_session": "0",
+            "pyq": input.pyq,
+            "total_session_in_sec": "0",
             "last_session": "0",
         }
 
