@@ -1,10 +1,10 @@
-from fastapi import Body, FastAPI, File, UploadFile, WebSocket
+from fastapi import FastAPI, WebSocket
 import io
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from app.model.chatModel import ChatWithModel
-import time
+import datetime
 
 origins = ["*"]
 
@@ -50,11 +50,10 @@ async def text_webscoket_endpoint(websocket: WebSocket):
         
         await websocket.send_text(response)
 
-
 class UserRequestMode(BaseModel):
     name: str
     tag: int
-    pd_code: str
+    pyq: str
 
 class session(BaseModel):
     name: str
@@ -62,39 +61,76 @@ class session(BaseModel):
 def changeTotalTime(timestamp, user):
     with open(user+".txt", "r") as f:
         lines = f.readlines()
-        lines[3] = str(float(lines[3])+(float(timestamp))-float(lines[4])) + "\n"
+        lines[4] = str(float(lines[4]) +(float(timestamp))-float(lines[4])) + "\n"
     with open(user+".txt", "w") as f:
         f.writelines(lines)
     return lines[3]
 
-@app.post("/session")
+
+@app.post("/sessionover")
 async def session_values(username: session):
-    timestamp = time.time()
+    timestamp = datetime.datetime.now()
     changeTotalTime(timestamp, username.name)
     with open(username.name+".txt", "a") as f:
         f.write(str(timestamp) + "\n")
-
         return {
             "tag": 0,
         }
 
+@app.post("/startsession")
+async def session_values(username: session):
+    numberOfSessions = 0
+    sessionTime = datetime.datetime.now()
+    name = session.name
+    tag = 0
+    pyq = ""
+    with open(username.name+".txt", "r") as f:
+        numberOfSessions = int(f.readlines()[1]) + 1
+        tag = int(f.readlines()[2])
+        pyq = f.readlines()[3]
+    with open(username.name+".txt", "w") as f:
+        f.write(name + "\n")
+        f.write(str(numberOfSessions) + "\n")
+        f.write(str(tag) + "\n")
+        f.write(pyq + "\n")
+        f.write("0" + "\n")
+        f.write(str(sessionTime) + "\n")
+
+    return {
+        "message": "Session Started",
+    }
+
 @app.post("/newuser")
 async def user_values(input: UserRequestMode):
     user_name = input.name
-    timestamp = time.time()
     with open(user_name+".txt", "w") as f:
-        f.write(input.name + "\n")
-        f.write(str(input.tag) + "\n")
-        f.write(input.pd_code + "\n")
-        f.write("0" + "\n")
-        f.write(str(timestamp) + "\n")
+        f.write(input.name + "\n") #name
+        f.write("0"+"\n") #total session
+        f.write(str(input.tag) + "\n") #propteries of user
+        f.write(input.pyq + "\n") #pyq
+        f.write("0" + "\n") #totalTimeSessions
+        f.write("0" + "\n") #lastSession
         return {
             "name": input.name,
+            "total_number_of_sessions": "0",
             "tag": input.tag,
-            "pd_code": input.pd_code,
+            "pyq": input.pd_code,
             "total_session": "0",
-            "timestamp": timestamp,
-            "sessionOverTime": "0"
+            "last_session": "0",
+        }
+
+@app.get("/user")
+async def get_user(username: session):
+    with open(username.name+".txt", "r") as f:
+        lines = [line.strip() for line in f.readlines()]
+
+        return {
+            "name": lines[0],
+            "total_number_of_sessions": lines[1],
+            "tag": lines[2],
+            "pyq": lines[3],
+            "total_time_sessions": lines[4],
+            "last_sessions": lines[5],
         }
 
 @app.get("/theorpy")

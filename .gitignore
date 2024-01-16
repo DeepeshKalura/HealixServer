@@ -20,3 +20,7 @@ __pycache__
 
 application_default_credentials.json
 client_secret.json
+
+*.log
+
+*.rules
