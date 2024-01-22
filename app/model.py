@@ -7,10 +7,8 @@ class User(BaseModel):
     token: str
     pyq_score: float
 
-class UserRequestMode(User):
-    created_at: str
 
 
 class UserResponseModel(User):
     id: int
-    message: str
+    created_at: str

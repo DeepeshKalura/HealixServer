@@ -1,14 +1,28 @@
-from fastapi import FastAPI, WebSocket
-import io
-from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
 import os
-from app.model.chatModel import ChatWithModel
 import datetime
 
+from fastapi import FastAPI, WebSocket
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+from app.model.chatModel import ChatWithModel
+from pymongo.mongo_client import MongoClient
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
+
+name=os.getenv("MONGO_NAME")
+password=os.getenv("MONGO_PASSWORD")
+
+
+from pymongo.mongo_client import MongoClient
+
+uri = f"mongodb+srv://{name}:{password}@cluster1.ussxiyu.mongodb.net/?retryWrites=true&w=majority"
+
+client = MongoClient(uri)
+
+db = client["dev"]
+
 origins = ["*"]
-
-
 
 app = FastAPI()
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/etc/secrets/application_default_credentials.json"
