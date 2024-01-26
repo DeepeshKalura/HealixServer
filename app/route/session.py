@@ -3,11 +3,13 @@ import sys
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 from uuid import uuid4
+from fastapi import APIRouter
+from fastapi.responses import FileResponse
 import requests
-import asyncio
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import database as db
+import pre_processing as pp
 load_dotenv(find_dotenv())
 
 database = db.get_db()
@@ -79,6 +81,7 @@ def create_session(token):
         
 def take_session(token, session_id, message):
     response = gemini_model(message)
+    pp.audio(response)
     new_thread = {
         "thread_id" : uuid4().hex,
         "message": message,
@@ -88,15 +91,32 @@ def take_session(token, session_id, message):
     collection.update_one({"token": token, "session.session_id": session_id}, {"$push": {"session.$.thread": new_thread}})
 
 
-# My case was like this:
-token = "56743233" 
-thearpy_to_user(token)
-for i in range(2):
 
+
+router = APIRouter(
+    prefix="/v1/cup/thearpy",  
+    tags=["Therapy"],
+)
+
+@router.post("/createsession")
+def session(token: str):
     session_id = create_session(token)
-    text = input("Enter the message: ")
-    while(text != "exit"):
-        take_session(token, session_id, text)
-        text = input("Enter the message: ")
+    return {
+        "session_id": session_id
+    }
 
-print("End of Program")
+from pydantic import BaseModel
+
+class session(BaseModel):
+    token: str
+    session_id: str
+    message: str
+
+@router.post("/takesession")
+def create_thread(input: session):
+    take_session(input.token, input.session_id, input.message)
+    response = FileResponse(path="audio.mp3", media_type="audio/mp3", filename="audio.mp3")
+    return response
+
+
+# print(create_thread(session_id="f78483949def4c7d82fbf899d4213df5", token="56743233", message="I am feeling sad"))
