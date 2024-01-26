@@ -1,26 +1,9 @@
 import os
-import datetime
 
 from fastapi import FastAPI, WebSocket
-from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from app.model.chatModel import ChatWithModel
 from pymongo.mongo_client import MongoClient
-from dotenv import load_dotenv, find_dotenv
-
-load_dotenv(find_dotenv())
-
-name=os.getenv("MONGO_NAME")
-password=os.getenv("MONGO_PASSWORD")
-
-
-from pymongo.mongo_client import MongoClient
-
-uri = f"mongodb+srv://{name}:{password}@cluster1.ussxiyu.mongodb.net/?retryWrites=true&w=majority"
-
-client = MongoClient(uri)
-
-db = client["dev"]
+from app.route import user, session
 
 origins = ["*"]
 
@@ -35,136 +18,83 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/etc/secrets/application_default_credentials.json"
+app.include_router(user.router)
+app.include_router(session.router)
 
 @app.get("/")
 async def root():
     return {"message": "Backend Client for the project"}
 
 
-class AudioRequestModel(BaseModel):
-    audio_url: str
 
+# @app.websocket("/text")
+# async def text_webscoket_endpoint(websocket: WebSocket):
 
-@app.websocket("/text")
-async def text_webscoket_endpoint(websocket: WebSocket):
+#     task = websocket.accept
 
-    task = websocket.accept
+#     chat_model = ChatWithModel()
 
-    chat_model = ChatWithModel()
+#     await task()
 
-    await task()
-
-    while True:
-        data = await websocket.receive_text()
-        if(data == 'exit' or data == 'Exit'):
-            await websocket.close()
-            break
-        response = chat_model.Phykologist(message=data)
+#     while True:
+#         data = await websocket.receive_text()
+#         if(data == 'exit' or data == 'Exit'):
+#             await websocket.close()
+#             break
+#         response = chat_model.Phykologist(message=data)
         
-        await websocket.send_text(response)
-
-class UserRequestMode(BaseModel):
-    name: str
-    tag: int
-    pyq: str
-
-class session(BaseModel):
-    name: str
-
-def changeTotalTime(timestamp, user):
-    with open(user+".txt", "r") as f:
-        lines = f.readlines()
-        timeTaken = ((timestamp))-float(lines[7])
-        lines[4] = str(float(lines[4]) +timestamp) + "\n"
-    with open(user+".txt", "w") as f:
-        f.writelines(lines)
-    return timeTaken
+#         await websocket.send_text(response)
 
 
-@app.post("/sessionover")
-async def session_values(username: session):
-    timestamp = datetime.datetime.now().timestamp()
-    timeTaken = changeTotalTime(timestamp, username.name)
-    with open(username.name+".txt", "r") as f:
-        lines = [line.strip() for line in f.readlines()]
-        return {
-            "tag": 0,
-            "timeTaken": str(timeTaken),
-            "totalTime": lines[4]
-        }
+# class session(BaseModel):
+#     name: str
 
-@app.post("/startsession")
-async def session_values(username: session):
-    numberOfSessions = 0
-    sessionTime = datetime.datetime.now()
-    startSession = sessionTime.timestamp()
-    tag = 0
-    pyq = ""
-    with open(username.name+".txt", "r") as f:
-        lines = f.readlines()
-        print(lines)
-        numberOfSessions = int(lines[1]) + 1
-        tag = int(lines[2])
-        pyq = lines[3]
-    with open(username.name+".txt", "w") as f:
-        f.write(username.name + "\n")
-        f.write(str(numberOfSessions) + "\n")
-        f.write(str(tag) + "\n")
-        f.write(pyq + "\n")
-        f.write("0" + "\n")
-        f.write(str(sessionTime) + "\n")
-        f.write(str(startSession) + "\n")
+# def changeTotalTime(timestamp, user):
+#     with open(user+".txt", "r") as f:
+#         lines = f.readlines()
+#         timeTaken = ((timestamp))-float(lines[7])
+#         lines[4] = str(float(lines[4]) +timestamp) + "\n"
+#     with open(user+".txt", "w") as f:
+#         f.writelines(lines)
+#     return timeTaken
 
-    return {
-        "message": "Session Started",
-    }
 
-@app.post("/user")
-async def user_values(input: UserRequestMode):
-    user_name = input.name
-    with open(user_name+".txt", "w") as f:
-        f.write(input.name + "\n") #name
-        f.write("0"+"\n") #total session
-        f.write(str(input.tag) + "\n") #propteries of user
-        f.write(input.pyq + "\n") #pyq
-        f.write("0" + "\n") #totalTimeSessions
-        f.write("0" + "\n") #lastSession
-        return {
-            "name": input.name,
-            "total_number_of_sessions": "0",
-            "tag": input.tag,
-            "pyq": input.pyq,
-            "total_session_in_sec": "0",
-            "last_session": "0",
-        }
+# @app.post("/sessionover")
+# async def session_values(username: session):
+#     timestamp = datetime.datetime.now().timestamp()
+#     timeTaken = changeTotalTime(timestamp, username.name)
+#     with open(username.name+".txt", "r") as f:
+#         lines = [line.strip() for line in f.readlines()]
+#         return {
+#             "tag": 0,
+#             "timeTaken": str(timeTaken),
+#             "totalTime": lines[4]
+#         }
 
-@app.get("/user")
-async def get_user(username: session):
-    with open(username.name+".txt", "r") as f:
-        lines = [line.strip() for line in f.readlines()]
+# @app.post("/startsession")
+# async def session_values(username: session):
+#     numberOfSessions = 0
+#     sessionTime = datetime.datetime.now()
+#     startSession = sessionTime.timestamp()
+#     tag = 0
+#     pyq = ""
+#     with open(username.name+".txt", "r") as f:
+#         lines = f.readlines()
+#         print(lines)
+#         numberOfSessions = int(lines[1]) + 1
+#         tag = int(lines[2])
+#         pyq = lines[3]
+#     with open(username.name+".txt", "w") as f:
+#         f.write(username.name + "\n")
+#         f.write(str(numberOfSessions) + "\n")
+#         f.write(str(tag) + "\n")
+#         f.write(pyq + "\n")
+#         f.write("0" + "\n")
+#         f.write(str(sessionTime) + "\n")
+#         f.write(str(startSession) + "\n")
 
-        return {
-            "name": lines[0],
-            "total_number_of_sessions": lines[1],
-            "tag": lines[2],
-            "pyq": lines[3],
-            "total_time_sessions": lines[4],
-            "last_sessions": lines[5],
-        }
+#     return {
+#         "message": "Session Started",
+#     }
 
-@app.get("/theorpy")
-async def get_theorpy(username: session):
-    theorpy = "Default"
-    with open(username.name+".txt", "r") as f:
-        lines = f.readlines()
-        if(lines[2]==1):
-            theorpy = "Depression"
-        elif(lines[2]==2):
-            theorpy = "Anxiety"
-        else:
-            theorpy = "Default"
 
-    return {
-        "theorpy": theorpy
-    }

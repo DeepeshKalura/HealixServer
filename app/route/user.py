@@ -1,10 +1,13 @@
 import os
-
+import sys
 from fastapi import APIRouter, status,  HTTPException
 import app.schema as schema 
 from datetime import  datetime
 from pymongo.mongo_client import MongoClient
 from typing import List
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '')))
+import session 
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -40,7 +43,8 @@ def post_user(user: schema.User):
             detail=f"User with token {user.token} already exists"
         )
     else:
-        ack_id = collection.insert_one(data)  
+        ack_id = collection.insert_one(data)
+        session.thearpy_to_user(user.token)  
         if(ack_id.acknowledged == True):
             result = collection.find_one({"_id": ack_id.inserted_id})
             result["id"] = str(result.pop("_id"))
