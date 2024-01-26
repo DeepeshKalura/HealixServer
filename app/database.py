@@ -17,5 +17,9 @@ def get_db():
     db = client["dev"]
     return db
 
+def get_collection(db, collectionName):
+    collection = db[collectionName]
+    return collection
+
 #! From this code I wanted  to build an abstraction layer for the database connection
 
