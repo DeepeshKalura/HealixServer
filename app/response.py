@@ -42,8 +42,3 @@ class GeminiModel(Model):
 
 def use_model(model: Model, message: str) -> str:
     return model.generate_response(message)
-
-gpt_model = ChatGPTModel()
-message = "Hello, how are you?"
-response_gpt = use_model(gpt_model, message)
-print("Response from GPT:", response_gpt)
