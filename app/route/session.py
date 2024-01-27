@@ -5,28 +5,17 @@ from dotenv import load_dotenv, find_dotenv
 from uuid import uuid4
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
-import requests
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import database as db
 import pre_processing as pp
+from response import use_model, ChatGPTModel
+
 load_dotenv(find_dotenv())
 
 database = db.get_db()
 
 collection = database["thearpy"]
-
-def gemini_model(message: str):
-    url = "http://127.0.0.1:5000"
-    response = requests.get(url+"/response", json={
-        "message": message,
-    })
-
-    if(response.status_code == 200):
-        output = response.json()["message"]
-        return output
-    print("Model have some issue")
-    exit(2)
 
 
 
@@ -80,7 +69,7 @@ def create_session(token):
 # create_session(token)
         
 def take_session(token, session_id, message):
-    response = gemini_model(message)
+    response = use_model(message=message, model=ChatGPTModel())
     pp.audio(response)
     new_thread = {
         "thread_id" : uuid4().hex,
@@ -89,8 +78,6 @@ def take_session(token, session_id, message):
         "created_at": datetime.now().isoformat()
     }
     collection.update_one({"token": token, "session.session_id": session_id}, {"$push": {"session.$.thread": new_thread}})
-
-
 
 
 router = APIRouter(

@@ -2,7 +2,6 @@ import os
 
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from pymongo.mongo_client import MongoClient
 from app.route import user, session
 
 origins = ["*"]
