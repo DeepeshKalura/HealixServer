@@ -175,7 +175,56 @@ def sentiment_compound(token: str):
 
 
 def theme_of_user(token: str):
-    return {'Love': 0.7555270791053772, 'Personal': 0.2001432627439499, 'Education': 0.021420901641249657, 'Technology': 0.01440218836069107, 'Work': 0.00850663147866726}
+    pipeline = [
+        {
+            "$match": {
+                "token": token
+            } 
+        }, 
+        {
+            "$unwind": "$session"
+        }, 
+        {
+            "$group": {
+                    "_id": "$session.session_id",
+                    "last_session": {"$last": "$session"}  # Get the last session for each session_id
+            }
+        }, 
+        {
+                "$replaceRoot": {"newRoot": "$last_session"}  # Replace the document with the last_session
+        },
+        {
+            "$unwind": "$thread"
+        },
+        {
+            "$project": {
+                "_id": 0,  # Exclude _id from the output
+                "response": "$thread.response"  # Include the response field from each thread
+            }
+        }
+        
+    ]
+    result = thearpy_collection.aggregate(pipeline=pipeline)
+
+    count = 0
+
+    sum_user_theme = {
+        'Personal': 0,
+        'Work': 0,
+        'Technology': 0,
+        'Education': 0,
+        'Love': 0
+    }
+    for response in result:
+        count += 1
+        for category, value in response['response'].items():
+            sum_user_theme[category] += value
+        
+
+    average_values = {category: sum_value / count for category, sum_value in sum_user_theme.items()}
+
+
+    return average_values
 
 def engagement_factor(token: str):
     W1 = W2 = 0.5
@@ -198,5 +247,4 @@ def get_metrics(token: str):
         "total_session_attended": total_session_attended(token),
         "sentiment_compound": sentiment_compound(token),
         "theme_of_user": theme_of_user(token),
-        "engagement_factor": engagement_factor(token)
     }
