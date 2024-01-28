@@ -2,7 +2,7 @@ import os
 
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from app.route import user, session
+from app.route import user, session, metrics
 
 origins = ["*"]
 
@@ -19,6 +19,7 @@ app.add_middleware(
 
 app.include_router(user.router)
 app.include_router(session.router)
+app.include_router(metrics.router)
 
 @app.get("/")
 async def root():
