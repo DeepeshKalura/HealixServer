@@ -13,7 +13,7 @@ if("learn" in currentBranch):
 print("Current Branch: ", currentBranch)
 
 
-subprocess.run(["pip", "install", "-r", "requirements.txt"])
+subprocess.run(["pip", "uninstall", "jupyter", "notebook"])
 
 # delete the currentBranch.ipynb file
 subprocess.run(["rm", currentBranch+".ipynb"])

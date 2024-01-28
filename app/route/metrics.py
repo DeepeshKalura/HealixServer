@@ -19,43 +19,118 @@ thearpy_collection = get_collection(db, "thearpy")
 
 
 
-def total_time_user_in_app():
+def total_time_user_in_session(token: str) -> str:
     pipeline = [
+        {
+            "$match": {
+
+                "token" :token
+            } 
+        },
         {
             "$unwind": "$session"
         },
         {
             "$group": {
                 "_id": "$session.session_id",
-                "user_id": {"$first": "$_id"},
-                "total_time": {"$sum": {"$subtract": [datetime.fromisoformat("$session.ended_at"), datetime.fromisoformat("$session.created_at")]}}
+                "start_time": {"$first": "$session.created_at"},
+                "end_time": {"$last": "$session.ended_at"},
+                "duration": {"$sum": {"$subtract": [{"$toDate": "$session.ended_at"}, {"$toDate": "$session.created_at"}]}},
             }
-        },
+        }, 
         {
             "$group": {
-                "_id": "$user_id",
-                "total_session_time": {"$sum": "$total_time"}
+                "_id": None,
+                "total_duration": {"$sum": "$duration"},
             }
         }
     ]
 
-    result = db.collection.aggregate(pipeline)
-    print(result)
+
+    result = thearpy_collection.aggregate(pipeline)
+    for i in result:
+        return i["total_duration"]
 
 
 
 
-    pass
+def list_of_duration_of_each_session(token: str):
+    pipeline = [
+        {
+            "$match": {
 
-def total_time_user_in_session():
-    pass
+                "token" :token
+            } 
+        },
+        {
+            "$unwind": "$session"
+        },
+        {
+            "$group": {
+                "_id": "$session.session_id",
+                "start_time": {"$first": "$session.created_at"},
+                "end_time": {"$last": "$session.ended_at"},
+                "duration": {"$sum": {"$subtract": [{"$toDate": "$session.ended_at"}, {"$toDate": "$session.created_at"}]}},
+            }
+        }, 
+    ]
+    return [i for i in thearpy_collection.aggregate(pipeline)]
 
 
-def last_session(): 
-    pass
+def last_session(token: str): 
+    pipeline = [
+        {
+            "$match": {
 
-def total_session_attended():
-    pass
+                "token" :token
+            } 
+        },
+        {
+            "$unwind": "$session"
+        },
+        {
+            "$group": {
+                "_id": "$session.session_id",
+            }
+        }, 
+        {
+            "$sort": {
+                "_id": -1
+            }
+        },
+        {
+            "$limit": 1
+        }
+    ]
+    for i in thearpy_collection.aggregate(pipeline):
+        return i["_id"]
+
+
+        
+    
+
+def total_session_attended(token: str):
+    pipeline = [
+        {
+            "$match": {
+
+                "token" :token
+            } 
+        },
+        {
+            "$unwind": "$session"
+        },
+        {
+            "$group": {
+                "_id": "$session.session_id",
+            }
+        }, 
+        {
+            "$count": "total_session_attended"
+        }
+    ]
+    for i in thearpy_collection.aggregate(pipeline):
+        return i["total_session_attended"]
 
 def sentiment_compound():
     pass
@@ -70,7 +145,12 @@ def engagement_factor():
 
 @router.get("/{token}")
 def get_metrics(token: str):
-
     return {
-        "message": "Hello World"
+        "total_time_user_in_session": total_time_user_in_session(token),
+        "list_of_duration_of_each_session": list_of_duration_of_each_session(token),
+        "last_session": last_session(),
+        "total_session_attended": total_session_attended(),
+        "sentiment_compound": sentiment_compound(),
+        "theme_of_user": theme_of_user(),
+        "engagement_factor": engagement_factor()
     }
