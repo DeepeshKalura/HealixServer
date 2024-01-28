@@ -2,8 +2,8 @@ import os
 from dotenv import load_dotenv, find_dotenv
 from fastapi import APIRouter
 from datetime import datetime
-
 from database import get_db, get_collection
+
 
 
 load_dotenv(find_dotenv())
@@ -16,6 +16,7 @@ router = APIRouter(
 
 db = get_db()
 thearpy_collection = get_collection(db, "thearpy")
+
 
 
 
@@ -132,14 +133,59 @@ def total_session_attended(token: str):
     for i in thearpy_collection.aggregate(pipeline):
         return i["total_session_attended"]
 
-def sentiment_compound():
-    pass
+def sentiment_compound(token: str):
+    pipeline = [
+        {
+            "$match": {
+                "token": token
+            } 
+        },
+        {
+            "$unwind": "$session"
+        },
+        {
+            "$group": {
+                "_id": "$session.session_id",
+                "last_session": {"$last": "$session"}  # Get the last session for each session_id
+            }
+        },
+        {
+            "$replaceRoot": {"newRoot": "$last_session"}  # Replace the document with the last_session
+        },
+        {
+            "$unwind": "$thread"  # Unwind the thread array
+        },
+        {
+            "$project": {
+                "_id": "$thread.thread_id",
+                "sentiment_compound" : "$thread.sentiment_compound"     
+            }
+        }    
+    ]
+    result = thearpy_collection.aggregate(pipeline=pipeline)
+    average_of_sentiment_compound = 0
+    print(result)
+    j = 0
+    for i in result:
+        j += 1
+        average_of_sentiment_compound += float(i["sentiment_compound"])
 
-def theme_of_user():
-    pass
+    return (average_of_sentiment_compound/j)
 
-def engagement_factor():
-    pass
+
+
+def theme_of_user(token: str):
+    return {'Love': 0.7555270791053772, 'Personal': 0.2001432627439499, 'Education': 0.021420901641249657, 'Technology': 0.01440218836069107, 'Work': 0.00850663147866726}
+
+def engagement_factor(token: str):
+    W1 = W2 = 0.5
+    utt_count = 1
+    interaction_time = 1
+    avg_platform_utt_count = 1
+    avg_platform_interaction_time = 1
+
+    return ( W1 * (utt_count/avg_platform_utt_count)  +  W2 * (interaction_time/avg_platform_interaction_time) ) * 100
+
 
 
 
@@ -148,9 +194,9 @@ def get_metrics(token: str):
     return {
         "total_time_user_in_session": total_time_user_in_session(token),
         "list_of_duration_of_each_session": list_of_duration_of_each_session(token),
-        "last_session": last_session(),
-        "total_session_attended": total_session_attended(),
-        "sentiment_compound": sentiment_compound(),
-        "theme_of_user": theme_of_user(),
-        "engagement_factor": engagement_factor()
+        "last_session": last_session(token=token),
+        "total_session_attended": total_session_attended(token),
+        "sentiment_compound": sentiment_compound(token),
+        "theme_of_user": theme_of_user(token),
+        "engagement_factor": engagement_factor(token)
     }
