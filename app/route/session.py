@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import database as db
 import pre_processing as pp
+from pydantic import BaseModel
 from response import use_model, ChatGPTModel
 
 load_dotenv(find_dotenv())
@@ -16,7 +17,15 @@ load_dotenv(find_dotenv())
 database = db.get_db()
 
 collection = database["thearpy"]
-    
+
+
+def update_time(token: str, session_id: str):
+    query = {
+        "token": token,
+        "session.session_id": session_id
+    }
+    collection.update_one(query, {"$set": {"session.$.ended_at": datetime.now().isoformat()}})
+
 def thearpy_to_user(token):
     data = {
         "token": token,
@@ -47,8 +56,6 @@ router = APIRouter(
     tags=["Therapy"],
 )
 
-
-from pydantic import BaseModel
 
 class session(BaseModel):
     token: str
@@ -101,5 +108,8 @@ def create_thread(input: session):
     collection.update_one(query, {"$push": {"session.$.thread": new_thread}})
 
     response = FileResponse(path="audio.mp3", media_type="audio/mp3", filename="audio.mp3")
+    update_time(token=input.token, session_id=input.session_id)
     return response
+
+
 
