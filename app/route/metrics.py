@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv, find_dotenv
 from fastapi import APIRouter
-from datetime import datetime
 from database import get_db, get_collection
 
 
@@ -226,12 +225,25 @@ def theme_of_user(token: str):
 
     return average_values
 
+def last_session_of_user_utt_count(token: str):
+    pass
+
+def last_session_of_user_interaction_time(token: str):
+    pass
+
+def platform_utt_count_average():
+    pass
+
+def platform_interaction_time_average():
+    pass
+
+
 def engagement_factor(token: str):
     W1 = W2 = 0.5
-    utt_count = 1
-    interaction_time = 1
-    avg_platform_utt_count = 1
-    avg_platform_interaction_time = 1
+    utt_count = last_session_of_user_utt_count(token)
+    interaction_time = last_session_of_user_interaction_time(token)
+    avg_platform_utt_count = platform_interaction_time_average()
+    avg_platform_interaction_time = platform_interaction_time_average()
 
     return ( W1 * (utt_count/avg_platform_utt_count)  +  W2 * (interaction_time/avg_platform_interaction_time) ) * 100
 
@@ -243,8 +255,9 @@ def get_metrics(token: str):
     return {
         "total_time_user_in_session": total_time_user_in_session(token),
         "list_of_duration_of_each_session": list_of_duration_of_each_session(token),
-        "last_session": last_session(token=token),
+        "last_session": last_session(token),
         "total_session_attended": total_session_attended(token),
         "sentiment_compound": sentiment_compound(token),
         "theme_of_user": theme_of_user(token),
+        "engagement_factor": engagement_factor(token)
     }
