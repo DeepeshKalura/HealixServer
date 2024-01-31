@@ -1,13 +1,10 @@
-import os
-
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.route import user, session, metrics
 
 origins = ["*"]
 
 app = FastAPI()
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/etc/secrets/application_default_credentials.json"
 
 app.add_middleware(
     CORSMiddleware,
