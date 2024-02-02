@@ -95,13 +95,13 @@ def create_thread(input: session):
             detail=f"User with token {input.token} not found"
         )
     sentiment_compound = pp.store_compound_score(input.message)
-    response = pp.store_theme_of_user(input.message)
+    theme = pp.store_theme_of_user(input.message)
     new_thread = {
         "thread_id" : uuid4().hex,
         "message": input.message,
         "response": response,
         "sentiment_compound": sentiment_compound,
-        "theme": response,
+        "theme": theme,
         "created_at": datetime.now().isoformat()
     }
 
