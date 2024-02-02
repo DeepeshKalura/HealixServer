@@ -78,7 +78,7 @@ def create_session(token):
         "session_id": session_id
     }
 
-@router.get("/takesession")
+@router.post("/takesession")
 def create_thread(input: session):
     query = {
         "token": input.token,
