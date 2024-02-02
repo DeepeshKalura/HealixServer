@@ -85,7 +85,7 @@ def create_thread(input: session):
         "session.session_id": input.session_id
     }
     response = use_model(message=input.message, model=ChatGPTModel())
-    pp.audio(response)
+    # pp.audio(response)
     document = collection.find_one(query)
 
 
@@ -107,9 +107,10 @@ def create_thread(input: session):
 
     collection.update_one(query, {"$push": {"session.$.thread": new_thread}})
 
-    response = FileResponse(path="audio.mp3", media_type="audio/mp3", filename="audio.mp3")
-    update_time(token=input.token, session_id=input.session_id)
-    return response
-
+    # response = FileResponse(path="audio.mp3", media_type="audio/mp3", filename="audio.mp3")
+    # update_time(token=input.token, session_id=input.session_id)
+    return {
+        "message":  response
+    }
 
 
