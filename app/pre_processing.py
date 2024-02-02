@@ -47,11 +47,14 @@ def store_theme_of_user(sentence):
         print(e)
         result = {'sequence': sentence, 'labels': ['Personal', 'Love', 'Education', 'Technology', 'Work'], 'scores': [0.5388193726539612, 0.4398689270019531, 0.01173669658601284, 0.006696830503642559, 0.0028781406581401825]}
     user_them = {}
-    for i in range(5):
-        
-        label = result["labels"][i]
-        score = result["scores"][i]
-        user_them[label] = score
+    if 'labels' in result and 'scores' in result:
+        for i in range(5):
+            
+            label = result["labels"][i]
+            score = result["scores"][i]
+            user_them[label] = score
+    else:
+        print("No the world")
     print("\n\n\n\n")
     print(user_them)
     print("\n\n\n\n")
