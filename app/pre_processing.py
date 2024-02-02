@@ -52,7 +52,9 @@ def store_theme_of_user(sentence):
         label = result["labels"][i]
         score = result["scores"][i]
         user_them[label] = score
-
+    print("\n\n\n\n")
+    print(user_them)
+    print("\n\n\n\n")
     return user_them
 
 
