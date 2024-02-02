@@ -39,6 +39,10 @@ def store_theme_of_user(sentence):
 
         response = requests.post(API_URL, headers=headers, json=payload)
         result = response.json()
+        print("\n\n\n\n")
+        print(result)
+        print("\n\n\n\n")
+
     except Exception as e:
         print(e)
         result = {'sequence': sentence, 'labels': ['Personal', 'Love', 'Education', 'Technology', 'Work'], 'scores': [0.5388193726539612, 0.4398689270019531, 0.01173669658601284, 0.006696830503642559, 0.0028781406581401825]}
