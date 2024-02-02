@@ -1,14 +1,12 @@
 import os
 from openai import OpenAI
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from transformers import pipeline
 from dotenv import load_dotenv, find_dotenv
+import requests
+
 load_dotenv(find_dotenv())
 
 
-
-
-classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 def audio(text):
@@ -25,9 +23,20 @@ def store_compound_score(sentence):
     return vs["compound"]
 
 
+
 def store_theme_of_user(sentence):
+    api = os.getenv('HUGGINGFACE_AUTH_TOKEN')
     candidate_labels = ['Personal', 'Love', 'Work', 'Education','Technology']
-    result = classifier(sentence, candidate_labels)
+    API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli"
+    headers = {"Authorization": f"Bearer {api}"}
+    payload = {
+        "inputs": sentence,
+        "parameters": {
+            "candidate_labels": candidate_labels
+        }
+    }
+    response = requests.post(API_URL, headers=headers, json=payload)
+    result = response.json()
     user_them = {}
     for i in range(len(result["labels"])):
         
@@ -36,4 +45,4 @@ def store_theme_of_user(sentence):
         user_them[label] = score
 
     return user_them
-    
+
