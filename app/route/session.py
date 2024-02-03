@@ -4,13 +4,12 @@ from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException, status
-from fastapi.responses import FileResponse
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import database as db
 import pre_processing as pp
 from pydantic import BaseModel
-from response import use_model, ChatGPTModel
+from response import use_model, ChatGPTModel, user_input
 
 load_dotenv(find_dotenv())
 
@@ -119,7 +118,7 @@ def create_thread_by_rag(input: session):
         "token": input.token,
         "session.session_id": input.session_id
     }
-    response = use_model(message=input.message, model=ChatGPTModel())
+    response = user_input(input.message)
     document = collection.find_one(query)
     if (document == None):
         raise HTTPException(
