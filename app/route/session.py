@@ -61,7 +61,7 @@ class session(BaseModel):
     session_id: str
     message: str
 
-@router.post("/{token}")
+@router.get("/{token}")
 def create_session(token): 
     session_id = uuid4().hex
     session = {
@@ -136,6 +136,9 @@ def create_thread_by_rag(input: session):
         "created_at": datetime.now().isoformat()
     }
     collection.update_one(query, {"$push": {"session.$.thread": new_thread}})
+    return {
+        "message":  response
+    }
 
 
     
