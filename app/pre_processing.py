@@ -27,7 +27,7 @@ def store_compound_score(sentence):
 def store_theme_of_user(sentence):
     api_key = os.getenv('HUGGINGFACE_AUTH_TOKEN')
     candidate_labels = ['Personal', 'Love', 'Work', 'Education','Technology']
-    API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli"
+    API_URL = ""
     headers = {"Authorization": f"Bearer {api_key}"}
     payload = {
         "inputs": sentence,
@@ -39,7 +39,6 @@ def store_theme_of_user(sentence):
 
         response = requests.post(API_URL, headers=headers, json=payload)
         result = response.json()
-        print(result)
 
 
     except Exception as e:
@@ -54,9 +53,7 @@ def store_theme_of_user(sentence):
             user_them[label] = score
     else:
         print("No the world")
-    print("\n\n\n\n")
     print(user_them)
-    print("\n\n\n\n")
     return user_them
 
 

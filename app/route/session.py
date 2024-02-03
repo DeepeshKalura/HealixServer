@@ -78,8 +78,8 @@ def create_session(token):
         "session_id": session_id
     }
 
-@router.post("/take/session")
-def create_thread(input: session):
+@router.post("/takesession/promot")
+def create_thread_by_promot(input: session):
     query = {
         "token": input.token,
         "session.session_id": input.session_id
@@ -112,5 +112,35 @@ def create_thread(input: session):
     return {
         "message":  response
     }
+
+@router.post("/takesession/rag")
+def create_thread_by_rag(input: session):
+    query = {
+        "token": input.token,
+        "session.session_id": input.session_id
+    }
+    response = use_model(message=input.message, model=ChatGPTModel())
+    document = collection.find_one(query)
+    if (document == None):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with token {input.token} not found"
+        )
+    sentiment_compound = pp.store_compound_score(input.message)
+    theme = pp.store_theme_of_user(input.message)
+    new_thread = {
+        "thread_id" : uuid4().hex,
+        "message": input.message,
+        "response": response,
+        "sentiment_compound": sentiment_compound,
+        "theme": theme,
+        "created_at": datetime.now().isoformat()
+    }
+    collection.update_one(query, {"$push": {"session.$.thread": new_thread}})
+
+
+    
+
+
 
 
