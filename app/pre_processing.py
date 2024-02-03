@@ -27,7 +27,7 @@ def store_compound_score(sentence):
 def store_theme_of_user(sentence):
     api_key = os.getenv('HUGGINGFACE_AUTH_TOKEN')
     candidate_labels = ['Personal', 'Love', 'Work', 'Education','Technology']
-    API_URL = ""
+    API_URL = "https://ml-project-mrorz.centralindia.inference.ml.azure.com/score"
     headers = {"Authorization": f"Bearer {api_key}"}
     payload = {
         "inputs": sentence,
