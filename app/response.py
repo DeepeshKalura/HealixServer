@@ -4,6 +4,11 @@ import requests
 from abc import ABC, abstractmethod
 from dotenv import load_dotenv, find_dotenv
 import requests
+from langchain.prompts import ChatPromptTemplate
+from langchain.chat_models import ChatOpenAI
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+
 load_dotenv(find_dotenv())
 
 
@@ -20,15 +25,6 @@ class ChatGPTModel(Model):
         response = requests.post("https://healix-chatgpt-model.onrender.com/model", json= {
             "input_text" : user_message
         })
-
-        # pr = "You are a therapist in the world who helps patients remove their mental discomfort by communicating with them. Your communication is always the short question so patient can open there heart to you"
-        # response = client.chat.completions.create(
-        # model="gpt-3.5-turbo-1106",
-        # messages=[
-        #     {"role": "system", "content": "You are a emotional support assistant, skilled in giving emotional support,your knowledge and assistance is limited to mental health support,Don't give response if it is not in the mental health context"},
-        #     {"role": "user", "content": f"Check if user is asking for mental or emotional support {user_message} if yes provide that support if no then respond with this is not my ability try to engage user in conversation and if needed try to give CBT also"}
-        # ]
-        # )
         result = response.json()              
         return result["message"]
 
@@ -46,5 +42,41 @@ class GeminiModel(Model):
         exit(2)
 
 
+
+
 def use_model(model: Model, message: str) -> str:
     return model.generate_response(message)
+
+def get_conversational_chain(user_question, results):
+
+    PROMPT_TEMPLATE = """
+    Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
+    provided context just say, "answer is not available in the context", don't provide the wrong answer\n\n
+    Context:\n {context}?\n
+
+
+    Answer the question based on the above context: {question}
+    """
+
+    model = ChatOpenAI()
+    print(results)
+    context_text = results
+    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    prompt = prompt_template.format(context=context_text, question=user_question)
+    
+
+    return prompt
+
+def user_input(user_question):
+    embeddings = OpenAIEmbeddings()
+
+    new_db = FAISS.load_local("faiss_index", embeddings)
+    result = new_db.similarity_search(user_question)
+
+    promot = get_conversational_chain(user_question=user_question, results=result)
+
+    model = ChatOpenAI()
+    response = model.predict(promot)
+
+    return response
+
