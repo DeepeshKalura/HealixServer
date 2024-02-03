@@ -1,8 +1,11 @@
 import os
+import sys
 from dotenv import load_dotenv, find_dotenv
 from fastapi import APIRouter
-from database import get_db, get_collection
+
 from collections import Counter
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+from database import get_db, get_collection
 
 
 
@@ -199,14 +202,14 @@ def theme_of_user(token: str):
         {
             "$project": {
                 "_id": 0,  # Exclude _id from the output
-                "response": "$thread.response"  # Include the response field from each thread
+                "user_theme": "$thread.theme"  # Include the response field from each thread
             }
         }
         
     ]
     result = thearpy_collection.aggregate(pipeline=pipeline)
 
-    count = 0
+    count = 5
 
     sum_user_theme = {
         'Personal': 0,
@@ -215,16 +218,15 @@ def theme_of_user(token: str):
         'Education': 0,
         'Love': 0
     }
-    for response in result:
-        count += 1
-        for category, value in response['response'].items():
-            sum_user_theme[category] += value
-        
 
-    average_values = {category: sum_value / count for category, sum_value in sum_user_theme.items()}
-
-
-    return average_values
+    for res in result:
+        print(res)
+        for i in res['user_theme']:
+            if i in sum_user_theme:
+                sum_user_theme[i] +=  res['user_theme'][i]
+    for i in sum_user_theme:
+        sum_user_theme[i] = sum_user_theme[i] / count
+    return sum_user_theme
 
 def last_session_of_user_utt_count(token: str):
     pipeline = [
@@ -291,6 +293,8 @@ def last_session_of_user_interaction_time(token: str):
     ]
     result = thearpy_collection.aggregate(pipeline)
     for i in result:
+        if i["duration"] == "0":
+            return 1.0
         return float(i["duration"])
 
 def platform_utt_count_average():
@@ -373,9 +377,10 @@ def platform_interaction_time_average():
         sum_of_duration += float(i["duration"])
         
 
-    return (sum_of_duration/total_session)
-
-
+    result = (sum_of_duration/total_session)
+    if(result == 0):
+        return 1.0
+    return result
 def engagement_factor(token: str):
     W1 = W2 = 0.5
     utt_count = last_session_of_user_utt_count(token)
@@ -399,3 +404,4 @@ def get_metrics(token: str):
         "theme_of_user": theme_of_user(token),
         "engagement_factor": engagement_factor(token)
     }
+

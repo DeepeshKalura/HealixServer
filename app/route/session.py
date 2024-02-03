@@ -107,7 +107,7 @@ def create_thread_by_promot(input: session):
     collection.update_one(query, {"$push": {"session.$.thread": new_thread}})
 
     # response = FileResponse(path="audio.mp3", media_type="audio/mp3", filename="audio.mp3")
-    # update_time(token=input.token, session_id=input.session_id)
+    update_time(token=input.token, session_id=input.session_id)
     return {
         "message":  response
     }
@@ -136,6 +136,7 @@ def create_thread_by_rag(input: session):
         "created_at": datetime.now().isoformat()
     }
     collection.update_one(query, {"$push": {"session.$.thread": new_thread}})
+    update_time(token=input.token, session_id=input.session_id)
     return {
         "message":  response
     }
