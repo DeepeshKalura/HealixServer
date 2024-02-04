@@ -58,8 +58,6 @@ def get_conversational_chain(user_question, results):
     Answer the question based on the above context: {question}
     """
 
-    model = ChatOpenAI()
-    print(results)
     context_text = results
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=user_question)

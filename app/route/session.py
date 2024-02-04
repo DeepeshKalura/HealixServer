@@ -94,13 +94,13 @@ def create_thread_by_promot(input: session):
             detail=f"User with token {input.token} not found"
         )
     sentiment_compound = pp.store_compound_score(input.message)
-    theme = pp.store_theme_of_user(input.message)
+    # theme = pp.store_theme_of_user(input.message)
     new_thread = {
         "thread_id" : uuid4().hex,
         "message": input.message,
         "response": response,
         "sentiment_compound": sentiment_compound,
-        "theme": theme,
+        # "theme": theme,
         "created_at": datetime.now().isoformat()
     }
 
@@ -126,13 +126,13 @@ def create_thread_by_rag(input: session):
             detail=f"User with token {input.token} not found"
         )
     sentiment_compound = pp.store_compound_score(input.message)
-    theme = pp.store_theme_of_user(input.message)
+    # theme = pp.store_theme_of_user(input.message)
     new_thread = {
         "thread_id" : uuid4().hex,
         "message": input.message,
         "response": response,
         "sentiment_compound": sentiment_compound,
-        "theme": theme,
+        # "theme": theme,
         "created_at": datetime.now().isoformat()
     }
     collection.update_one(query, {"$push": {"session.$.thread": new_thread}})

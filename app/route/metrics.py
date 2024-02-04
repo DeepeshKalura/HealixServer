@@ -401,7 +401,7 @@ def get_metrics(token: str):
         "last_session": last_session(token),
         "total_session_attended": total_session_attended(token),
         "sentiment_compound": sentiment_compound(token),
-        "theme_of_user": theme_of_user(token),
+        # "theme_of_user": theme_of_user(token),
         "engagement_factor": engagement_factor(token)
     }
 
