@@ -1,13 +1,20 @@
+# Use the official Python image as the base image
 FROM python:3.11.5
 
-WORKDIR /code
+# Set the working directory inside the container
+WORKDIR /app
 
-COPY requirements.txt .
+# Copy the requirements.txt file into the container at /app
+COPY requirements.txt /app/
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+# Install any dependencies specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy the current directory contents into the container at /app
+COPY . /app/
 
+# Expose the port that FastAPI will run on
 EXPOSE 3100
 
+# Command to run the FastAPI application
 CMD ["./startup.sh"]
