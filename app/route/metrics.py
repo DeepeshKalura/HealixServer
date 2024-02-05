@@ -228,7 +228,7 @@ def theme_of_user(token: str):
         sum_user_theme[i] = sum_user_theme[i] / count
     return sum_user_theme
 
-def last_session_of_user_utt_count(token: str):
+def every_session_utt_count(token: str):
     pipeline = [
         {
             "$match": {
@@ -240,32 +240,29 @@ def last_session_of_user_utt_count(token: str):
             "$unwind": "$session"
         },
         {
-            "$group": {
+            "$project": {
                     "_id": "$session.session_id",
-                    "last_session": {"$last": "$session"}  # Get the last session for each session_id
+                    "thread": "$session.thread",
                 }
-        },
-        {
-            "$replaceRoot": {"newRoot": "$last_session"}  # Replace the document with the last_session
         },
         {
             "$unwind": "$thread"
-        }, 
+        },
         {
-            "$project": {
-                "thread_count": "$thread.thread_id",
+            "$group": {
+                "_id": "$_id",
+                "utt_count": {"$sum": 1},
+                
             }
-        }, 
-        {
-            "$count": "thread_count"
-        } 
+        },
+
+
     ]
+    l = [i for i in thearpy_collection.aggregate(pipeline)]
+    return l
+    
 
-    result = thearpy_collection.aggregate(pipeline)
-    for i in result:
-        return float(i["thread_count"])
-
-def last_session_of_user_interaction_time(token: str):
+def user_interaction_time_per_session(token: str):
     pipeline = [
         {
             "$match": {
@@ -279,23 +276,20 @@ def last_session_of_user_interaction_time(token: str):
         {
             "$group": {
                     "_id": "$session.session_id",
-                    "last_session": {"$last": "$session"}  # Get the last session for each session_id
+                    "start_time": {"$first": "$session.created_at"},
+                    "end_time": {"$last": "$session.ended_at"},
+                    "duration": {"$sum": {"$subtract": [{"$toDate": "$session.ended_at"}, {"$toDate": "$session.created_at"}]}},
                 }
         },
         {
-            "$replaceRoot": {"newRoot": "$last_session"}  # Replace the document with the last_session
-        }, 
-        {
             "$project": {
-                "duration": {"$sum": {"$subtract": [{"$toDate": "$ended_at"}, {"$toDate": "$created_at"}]}},
+                # "_id": 0,
+                "duration": "$duration"
             }
         }
     ]
-    result = thearpy_collection.aggregate(pipeline)
-    for i in result:
-        if i["duration"] == "0":
-            return 1.0
-        return float(i["duration"])
+    l = [i for i in thearpy_collection.aggregate(pipeline)]
+    return l
 
 def platform_utt_count_average():
     pipeline = [
@@ -383,8 +377,8 @@ def platform_interaction_time_average():
     return result
 def engagement_factor(token: str):
     W1 = W2 = 0.5
-    utt_count = last_session_of_user_utt_count(token)
-    interaction_time = last_session_of_user_interaction_time(token)
+    utt_count = every_session_utt_count(token)
+    interaction_time = user_interaction_time_per_session(token)
     avg_platform_utt_count = platform_utt_count_average()
     avg_platform_interaction_time = platform_interaction_time_average()
 
