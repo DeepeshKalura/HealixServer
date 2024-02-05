@@ -5,8 +5,8 @@ from abc import ABC, abstractmethod
 from dotenv import load_dotenv, find_dotenv
 import requests
 from langchain.prompts import ChatPromptTemplate
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.chat_models import ChatOpenAI
+from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 
 load_dotenv(find_dotenv())
