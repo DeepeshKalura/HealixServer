@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 3100
 
-CMD ["gunicorn", "app.main:app"]
+CMD ["./startup.sh"]
