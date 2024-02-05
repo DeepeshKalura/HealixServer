@@ -149,31 +149,22 @@ def sentiment_compound(token: str):
         {
             "$group": {
                 "_id": "$session.session_id",
-                "last_session": {"$last": "$session"}  # Get the last session for each session_id
+                "thread": {"$push": "$session.thread"}
             }
         },
         {
-            "$replaceRoot": {"newRoot": "$last_session"}  # Replace the document with the last_session
-        },
-        {
-            "$unwind": "$thread"  # Unwind the thread array
+            "$unwind": "$thread"
         },
         {
             "$project": {
-                "_id": "$thread.thread_id",
-                "sentiment_compound" : "$thread.sentiment_compound"     
+                # "sentiment_compound": "$thread.sentiment_compound"
+                "avg_sentiment_compound": {"$avg" : "$thread.sentiment_compound"}
             }
-        }    
+        }
     ]
     result = thearpy_collection.aggregate(pipeline=pipeline)
-    average_of_sentiment_compound = 0
-    print(result)
-    j = 0
-    for i in result:
-        j += 1
-        average_of_sentiment_compound += float(i["sentiment_compound"])
-
-    return (average_of_sentiment_compound/j)
+    l = [i for i in result]
+    return l
 
 
 
@@ -375,14 +366,41 @@ def platform_interaction_time_average():
     if(result == 0):
         return 1.0
     return result
+
 def engagement_factor(token: str):
     W1 = W2 = 0.5
-    utt_count = every_session_utt_count(token)
-    interaction_time = user_interaction_time_per_session(token)
-    avg_platform_utt_count = platform_utt_count_average()
-    avg_platform_interaction_time = platform_interaction_time_average()
+    t = user_interaction_time_per_session(token)
+    # print(t)
+    l = every_session_utt_count(token)
 
-    return ( W1 * (utt_count/avg_platform_utt_count)  +  W2 * (interaction_time/avg_platform_interaction_time) ) * 100
+    aac = platform_utt_count_average()
+    paic = platform_interaction_time_average()
+    # print(aac)
+
+    if(aac == 0):
+        aac = 1
+    if(paic == 0):
+        paic = 1
+
+    # print(paic)
+    en_fct = []
+
+    for i in t:
+        f = (i["_id"])
+        for j in l:
+            # print(j["_id"])
+            if f == j["_id"]:
+                temp1 = j["utt_count"] / aac
+                temp2 = i["duration"] / paic
+                en = W1 * temp1 + W2 * temp2
+                en_fct_temp = ({"_id": f, "engagement_factor": str(en)})
+                en_fct += [en_fct_temp]
+                f = None
+        if(f != None):
+            en_fct_temp = ({"_id": f, "engagement_factor": str(0.0)})
+            en_fct += [en_fct_temp]
+
+    return en_fct
 
 
 
