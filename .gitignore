@@ -24,3 +24,5 @@ client_secret.json
 *.log
 
 *.rules
+
+cloud
