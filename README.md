@@ -1,40 +1,84 @@
-# Social Well-being Project Backend
+# Project Healix Backend
 
-## Overview
+## Description:
 
-Welcome to the backend repository of our Social Well-being Project. This project focuses on providing AI-powered audio chat therapy for clients, contributing to their mental health and well-being.
+Project Healix is a compassionate and empowering initiative committed to fostering emotional well-being and mental health awareness. Leveraging the power of FastAPI, this Python server delivers crucial support and knowledge to users seeking guidance and understanding.
 
+## Key Features:
 
-## Project Structure
+Emotional Support: Provides users with access to various tools and resources tailored to address emotional challenges, fostering a sense of comfort and connection.
+Mental Health Knowledge: Offers comprehensive information on a range of mental health topics, presented in a clear, accessible, and destigmatizing manner
 
-The backend is structured as a RESTful API using FastAPI to interact with the AI audio chat service. Here's a brief overview of the project structure:
+## Setup Locally
 
-- **`app/`**: Contains the FastAPI application code.
-  - **`api/`**: Handles API routes and controllers.
-  - **`models/`**: Defines data models.
-- **`tests/`**: Contains test cases for the API.
-- **`requirements.txt`**: Lists the Python dependencies for the project.
+To set up the Project Healix backend locally, follow these steps:
 
-## Technologies Used
+### Prerequisites
 
-- **FastAPI**: Fast (high-performance), web framework for building APIs with Python.
-- **Gemini**: Chat AI Service.
+Make sure you have the following installed on your system:
 
-## TODO Flow
-### First One
-- [ ] Webscoket have the session that will get the text and Gemini will going to response with the  that will be response of webscoket
-- [ ] Storage will store all the important data in the file
-- [ ] log the important information 
+- Python 3.11.x
+- pip (Python package installer)
 
-### Second One
-- [ ] Webscoket have the session that will get the stream of audio and Gemini will going to response with the Text that will be convert to audio that audio will be webscoket response.
-- [ ] Storage will store all the important data in the file
-- [ ] log the important information 
-## API Documentation
+### Installation
 
-For detailed API documentation and endpoints, refer to the automatically generated [Swagger Documentation](http://localhost:8000/docs) and [ReDoc Documentation](http://localhost:8000/redoc) during development.
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/DeepeshKalura/HealixServer
+    ```
+
+2. Navigate into the project directory:
+
+    ```bash
+    cd HealixServer
+    ```
+
+3. Install dependencies using pip:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+### Running the Server
+
+Once you have installed the dependencies, you can start the FastAPI server by running the following command:
+
+```bash
+uvicorn main:app --reload
+```
+
+This command will start the server, and it will automatically reload whenever you make changes to the code.
+
+You can then access the server at `http://localhost:8000`.
 
 ## Contributing
 
-We welcome contributions to enhance the functionality and features of the project. If you'd like to contribute, please follow our [Contribution Guidelines](CONTRIBUTING.md).
+We welcome contributions from the community to make Project Healix even better! If you'd like to contribute, please follow these guidelines:
+
+### Pull Requests
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix: `git checkout -b feature-name`.
+3. Make your changes and commit them with descriptive commit messages.
+4. Push your branch to your fork: `git push origin feature-name`.
+5. Submit a pull request to the `production` branch of the original repository.
+
+### Issues
+
+If you encounter any bugs or have ideas for new features, please open an issue on GitHub.
+
+### Code Style
+
+Please follow the PEP 8 style guide for Python code. Additionally, make sure to write clear and concise commit messages.
+
+### Testing
+
+Before submitting a pull request, make sure to test your changes locally and ensure they do not introduce any regressions.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+
 
