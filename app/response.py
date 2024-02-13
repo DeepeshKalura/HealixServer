@@ -22,7 +22,7 @@ class Model(ABC):
 
 class ChatGPTModel(Model):
     def generate_response(self, user_message: str) -> str:
-        response = requests.post("http://20.219.168.47/model", json= {
+        response = requests.post("https://healix-chatgpt-model.onrender.com/model", json= {
             "input_text" : user_message
         })
         result = response.json()              
