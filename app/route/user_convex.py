@@ -6,7 +6,6 @@ from convex import Convex
 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '')))
-import session 
 
 router = APIRouter(
     prefix="/v1/convex/users",  
