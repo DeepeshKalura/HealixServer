@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from app.route import user, session, metrics
+from app.route import user, session, metrics, user_convex
 
 origins = ["*"]
 
@@ -22,6 +22,7 @@ app.add_middleware(
 app.include_router(user.router)
 app.include_router(session.router)
 app.include_router(metrics.router)
+app.include_router(user_convex.router)
 
 @app.get("/")
 async def root():

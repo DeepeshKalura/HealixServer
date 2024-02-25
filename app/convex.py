@@ -1,6 +1,7 @@
 import requests
+from baas import Baas
 
-class Convex: 
+class Convex(Baas): 
     """
     A class representing a Convex API client.
 
