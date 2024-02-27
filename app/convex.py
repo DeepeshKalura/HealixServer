@@ -61,4 +61,19 @@ class Convex(Baas):
         user_url = self.url + f"/users/{id}"
         response = requests.delete(user_url)
         return response.status_code
+    
+
+    def create_session(self, token):
+        """
+        Creates a new session.
+
+        Args:
+            token (str): The token of the user.
+
+        Returns:
+            dict: The JSON response containing the session information.
+        """
+        session_url = self.url + f"/sessions/{token}"
+        response = requests.get(session_url)
+        return response.json()
 
