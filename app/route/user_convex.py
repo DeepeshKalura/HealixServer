@@ -14,19 +14,16 @@ router = APIRouter(
 
 convex = Convex("http://localhost:3001")
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schema.UserResponseModel)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 def create_user(user: schema.User):
-    data = {
-        "name": user.name,
-    }
-    result = convex.create_user(data)
+    result = convex.create_user(user.name)
     return result
 
     
 
 
 
-@router.get("/{id}", status_code=status.HTTP_200_OK, response_model=schema.UserResponseModel)
+@router.get("/{id}", status_code=status.HTTP_200_OK)
 def get_user_with_id(id: str):
     result = convex.get_user(id)
     return result
