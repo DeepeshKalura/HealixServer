@@ -8,3 +8,12 @@ class Baas(ABC):
         pass
     def delete_user(self, id):
         pass
+    def create_session(self, user_id):
+        pass
+
+    def create_thread(self, session_id, message, response, sentiment_compound):
+        pass
+    def session_completed(self, session_id):
+        pass
+    def update_last_time_session(self, session_id):
+        pass

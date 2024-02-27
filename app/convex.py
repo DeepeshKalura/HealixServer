@@ -63,7 +63,7 @@ class Convex(Baas):
         return response.status_code
     
 
-    def create_session(self, token):
+    def create_session(self, user_id):
         """
         Creates a new session.
 
@@ -73,7 +73,23 @@ class Convex(Baas):
         Returns:
             dict: The JSON response containing the session information.
         """
-        session_url = self.url + f"/sessions/{token}"
-        response = requests.get(session_url)
+        session_url = self.url + f"/sessions"
+        response = requests.post(session_url, json={"id": user_id})
+        return response.json()
+    
+
+    def create_thread(self, session_id, message, response, sentiment_compound):
+        thread_url = self.url + f"/sessions/threads"
+        response = requests.post(thread_url, json={"id": session_id, "message": message, "response": response, "sentiment_compound": sentiment_compound})
+        return response.json()
+
+    def session_completed(self, session_id):
+        thread_url = self.url + f"/sessions/threads/{session_id}"
+        response = requests.patch(thread_url)
+        return response.json()
+    
+    def update_last_time_session(self, session_id):
+        thread_url = self.url + f"/sessions/{session_id}"
+        response = requests.patch(thread_url)
         return response.json()
 
