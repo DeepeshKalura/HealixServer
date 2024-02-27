@@ -15,5 +15,3 @@ class Baas(ABC):
         pass
     def session_completed(self, session_id):
         pass
-    def update_last_time_session(self, session_id):
-        pass
