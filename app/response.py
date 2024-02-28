@@ -65,7 +65,7 @@ def get_conversational_chain(user_question, results):
 
     return prompt
 
-def user_input(user_question):
+def user_input(user_question: str):
     embeddings = OpenAIEmbeddings()
 
     new_db = FAISS.load_local("faiss_index", embeddings)
