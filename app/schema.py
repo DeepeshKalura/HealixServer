@@ -15,3 +15,9 @@ class UserUpdateModel(BaseModel):
     name: str
 
 
+# Therapy Model
+    
+class session(BaseModel):
+    session_id: str
+    message: str
+

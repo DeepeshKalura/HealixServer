@@ -79,8 +79,8 @@ class Convex(Baas):
     
 
     def create_thread(self, session_id, message, response, sentiment_compound):
-        thread_url = self.url + f"/sessions/threads/{session_id}"
-        response = requests.post(thread_url, json={"message": message, "response": response, "sentiment_compound": sentiment_compound})
+        thread_url = self.url + f"/sessions/threads/"
+        response = requests.post(thread_url, json={"id": session_id, "message": message, "response": response, "sentiment_compound": sentiment_compound})
         print("I reached here at least")
         print(response.text)
         update_url = self.url + f"/sessions/{session_id}"

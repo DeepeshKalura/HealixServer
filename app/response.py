@@ -29,9 +29,9 @@ class ChatGPTModel(Model):
         return result["message"]
 
 class GeminiModel(Model):
-    def generate_response(message: str) -> str:
+    def generate_response(self, message: str) -> str:
         url = "http://127.0.0.1:5000"
-        response = requests.get(url+"/response", json={
+        response = requests.post(url+"/gemini", json={
             "message": message,
         })
 
@@ -46,6 +46,8 @@ class GeminiModel(Model):
 
 def use_model(model: Model, message: str) -> str:
     return model.generate_response(message)
+
+
 
 def get_conversational_chain(user_question, results):
 
@@ -77,5 +79,3 @@ def user_input(user_question: str):
     response = model.predict(promot)
 
     return response
-
-
