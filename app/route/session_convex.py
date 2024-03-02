@@ -17,7 +17,7 @@ router = APIRouter(
 
 convex = Convex("http://localhost:3001")
 
-@router.get("/{user_id}")
+@router.post("/{user_id}")
 def create_session(user_id: str):
     session_id = convex.create_session(user_id)
     return session_id
