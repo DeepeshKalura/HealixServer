@@ -93,7 +93,10 @@ class Convex(Baas):
         thread_url = self.url + f"/sessions/threads/{session_id}"
         response = requests.patch(thread_url)
         
-    
+    def get_all_session(self, user_id):
+        thread_url = self.url + f"/sessions/{user_id}"
+        response = requests.get(thread_url)
+        return response.json()
     
 
 # For testing purpose here
