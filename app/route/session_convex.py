@@ -20,9 +20,7 @@ convex = Convex("http://localhost:3001")
 @router.get("/{user_id}")
 def create_session(user_id: str):
     session_id = convex.create_session(user_id)
-    return {
-        "session_id": session_id
-    }
+    return session_id
 
 @router.post("/")
 def create_thread(session: session):
@@ -32,6 +30,11 @@ def create_thread(session: session):
     print(sentiment_compound)
     result = convex.create_thread(session_id=session.session_id, message=session.message, response=response, sentiment_compound=sentiment_compound)
     return result
+
+@router.get("/{user_id}")
+def get_session(user_id: str):
+    response = convex.get_session(user_id=user_id)
+    return response
 
 @router.websocket("/ws")
 async def audio_excahnge(websocket: WebSocket):
